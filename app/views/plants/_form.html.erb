@@ -1,0 +1,57 @@
+<%= form_with(model: plant, local: true) do |form| %>
+  <% if plant.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(plant.errors.count, "error") %> prohibited this plant from being saved:</h2>
+
+      <ul>
+        <% plant.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :emergence %>
+    <%= form.text_field :emergence %>
+  </div>
+
+  <div class="field">
+    <%= form.label :depth %>
+    <%= form.number_field :depth %>
+  </div>
+
+  <div class="field">
+    <%= form.label :seed_spacing %>
+    <%= form.number_field :seed_spacing %>
+  </div>
+
+  <div class="field">
+    <%= form.label :row_spacing %>
+    <%= form.number_field :row_spacing %>
+  </div>
+
+  <div class="field">
+    <%= form.label :grouping %>
+    <%= form.number_field :grouping %>
+  </div>
+
+  <div class="field">
+    <%= form.label :maturity %>
+    <%= form.text_field :maturity %>
+  </div>
+
+  <div class="field">
+    <%= form.label :thinning %>
+    <%= form.text_field :thinning %>
+  </div>
+
+  <div class="field">
+    <%= form.label :mound %>
+    <%= form.check_box :mound %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

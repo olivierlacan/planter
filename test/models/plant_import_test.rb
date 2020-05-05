@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PlantTest < ActiveSupport::TestCase
+class PlantImportTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

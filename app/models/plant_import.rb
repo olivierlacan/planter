@@ -1,0 +1,2 @@
+class PlantImport < ApplicationRecord
+end

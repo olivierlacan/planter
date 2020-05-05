@@ -1,0 +1,43 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  botanical_name: MyString
+  days_to_maturity: MyString
+  family: MyString
+  native: MyString
+  hardiness: MyString
+  plant_dimensions: MyString
+  variety_information: MyString
+  type: 
+  when_to_sow_outside: MyString
+  when_to_start_inside: MyString
+  days_to_emerge: MyString
+  seed_depth: MyString
+  seed_spacing: MyString
+  row_spacing: MyString
+  thinning: MyString
+  harvesting: MyString
+  learn_more: MyString
+  url: MyString
+
+two:
+  name: MyString
+  botanical_name: MyString
+  days_to_maturity: MyString
+  family: MyString
+  native: MyString
+  hardiness: MyString
+  plant_dimensions: MyString
+  variety_information: MyString
+  type: 
+  when_to_sow_outside: MyString
+  when_to_start_inside: MyString
+  days_to_emerge: MyString
+  seed_depth: MyString
+  seed_spacing: MyString
+  row_spacing: MyString
+  thinning: MyString
+  harvesting: MyString
+  learn_more: MyString
+  url: MyString

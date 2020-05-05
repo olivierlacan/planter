@@ -10,20 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_25_073349) do
+ActiveRecord::Schema.define(version: 2020_04_25_094946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "plants", force: :cascade do |t|
-    t.string "emergence"
-    t.integer "depth"
-    t.integer "seed_spacing"
-    t.integer "row_spacing"
-    t.integer "grouping"
-    t.int4range "maturity"
+  create_table "plant_imports", force: :cascade do |t|
+    t.string "name"
+    t.string "botanical_name"
+    t.string "days_to_maturity"
+    t.string "family"
+    t.string "native"
+    t.string "hardiness"
+    t.string "plant_dimensions"
+    t.string "variety_information"
+    t.string "type"
+    t.string "when_to_sow_outside"
+    t.string "when_to_start_inside"
+    t.string "days_to_emerge"
+    t.string "seed_depth"
+    t.string "seed_spacing"
+    t.string "row_spacing"
     t.string "thinning"
-    t.boolean "mound"
+    t.string "harvesting"
+    t.string "learn_more"
+    t.string "url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

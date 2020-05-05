@@ -59,5 +59,15 @@ namespace :scrape do
       file << data.to_json
     end
   end
+
+  desc "Load stored JSON import of Botanical Interests data"
+  task load: :environment do
+    file = Dir.glob("*botanical_interests.json").last
+    hash = eval File.read(file)
+    json = hash.to_json
+
+    File.open("#{Time.current.strftime("%Y-%m-%d")}-botanical_interests_fixed.json", "wb") do |file|
+      file << json
+    end
   end
 end

@@ -17,6 +17,9 @@ namespace :scrape do
     data = vegetables.each_with_object({}) do |veggie_name, memo|
       puts "Fetching data for #{veggie_name} ..."
       parameterized_name = veggie_name
+
+      # Turns out the way Botanical Interests turns plant names into URLs is
+      # very, very weird. Ohai Stephen!
       nixed = %w[ ' / ( )]
       replaced = { "#" => "X", " " => "-", "&" => "and", "ñ" => "n" }
       nixed.each { |n| parameterized_name = parameterized_name.gsub(n, "") }

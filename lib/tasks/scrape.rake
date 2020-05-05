@@ -23,6 +23,7 @@ namespace :scrape do
       replaced.each { |key, value| parameterized_name = parameterized_name.gsub(key, value) }
 
       uri = URI "https://www.botanicalinterests.com/product/#{parameterized_name}"
+      puts uri
       response = Net::HTTP.get uri
       doc = Nokogiri::HTML response
 
@@ -49,9 +50,14 @@ namespace :scrape do
         end
       end
 
+      pp properties
+
       memo[properties["botanical-name"]] = properties
     end
 
-    pp data
+    File.open("#{Time.current.strftime("%Y-%m-%d")}-botanical_interests.json", "wb") do |file|
+      file << data.to_json
+    end
+  end
   end
 end

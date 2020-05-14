@@ -3,63 +3,96 @@ namespace :scrape do
   task botanical: :environment do
     require "net/http"
 
-    page_range = (1..10)
-    vegetables = page_range.to_a.each_with_object(Set.new) do |number, memo|
-      puts "Fetching vegetable list from Botanical Interests, page #{number}..."
-      uri = URI "https://www.botanicalinterests.com/category/view-all-vegetables/#{number}"
-      response = Net::HTTP.get uri
-      doc = Nokogiri::HTML response
-      doc.css(".product h2").map { |e| e.content.squish }.each { |e| memo << e }
+    list = "botanical_interests_vegetable_list.json"
+
+    vegetables = if File.exist?(list)
+      json = JSON.parse(File.read(list))
+
+      puts "Found a list of #{json.count} vegetables cached, using that!"
+
+      json
+    else
+      page_range = (1..30)
+      vegetables = page_range.to_a.each_with_object(Set.new) do |number, memo|
+        puts "Fetching vegetable list from Botanical Interests, page #{number}..."
+        uri = URI "https://www.botanicalinterests.com/category/view-all-vegetables/#{number}"
+        response = Net::HTTP.get_response uri
+        doc = Nokogiri::HTML response.body
+
+        if doc.css("#prodlist li").any?
+          doc.css(".product").each do |vegetable|
+            veggie_name = vegetable.css("h2").text.squish
+            veggie_url = vegetable.css(".content > a").first["href"]
+
+            memo << { "name" => veggie_name, "url" => veggie_url }
+          end
+        else
+          puts "Oops, looks like page #{number} is empty, so we went through all pages!"
+          break memo
+        end
+      end
+
+      require "json"
+
+      File.open(list, "wb") do |file|
+        puts "Saving vegetable list to #{list}..."
+        file << JSON.pretty_generate(vegetables)
+      end
+
+      vegetables
     end
 
     puts "Found #{vegetables.length} vegetables!"
 
-    data = vegetables.each_with_object({}) do |veggie_name, memo|
-      puts "Fetching data for #{veggie_name} ..."
-      parameterized_name = veggie_name
+    binding.irb
 
-      # Turns out the way Botanical Interests turns plant names into URLs is
-      # very, very weird. Ohai Stephen!
-      nixed = %w[ ' / ( )]
-      replaced = { "#" => "X", " " => "-", "&" => "and", "ñ" => "n" }
-      nixed.each { |n| parameterized_name = parameterized_name.gsub(n, "") }
-      replaced.each { |key, value| parameterized_name = parameterized_name.gsub(key, value) }
+    File.open("#{Time.current.strftime("%Y-%m-%d")}-botanical_interests_individual_plants.json", "wb") do |file|
+      vegetables.reject { |v| v['name'].include?("Sow and Grow Guide") }.each do |veggie|
+        puts "Fetching data for #{veggie['name']} ..."
 
-      uri = URI "https://www.botanicalinterests.com/product/#{parameterized_name}"
-      puts uri
-      response = Net::HTTP.get uri
-      doc = Nokogiri::HTML response
+        uri = URI "https://www.botanicalinterests.com#{veggie['url']}"
+        puts uri
+        response = Net::HTTP.get uri
 
-      tabs = [
-        1, # variety info
-        2, # sowing info
-        3  # growing info
-      ]
+        binding.irb if response.empty?
 
-      properties = tabs.map do |tab|
-        doc.css(".tab_data_container .tab-pane:nth-child(#{tab}) > p").each_with_object({}) do |p, memo|
-          print "."
+        doc = Nokogiri::HTML response
 
-          next if p.content.squish.empty?
+        tabs = [
+          1, # variety info
+          2, # sowing info
+          3  # growing info
+        ]
 
-          key = p.content.split(":").first.parameterize
-          value = p.content.split(":").last.squish
+        properties = tabs.map do |tab|
+          doc.css(".tab_data_container .tab-pane:nth-child(#{tab}) > p").each_with_object({}) do |p, memo|
+            print "."
 
-          memo[key] = value
+            next if p.content.squish.empty?
+
+            key = p.content.split(":").first.parameterize
+            value = p.content.split(":").last.squish
+
+            memo[key] = value
+          end
+        end.each_with_object({ "name" => veggie['name'], "source_url" => uri }) do |arr, memo|
+          arr.each do |k,v|
+            memo[k] = v
+          end
         end
-      end.each_with_object({}) do |arr, memo|
-        arr.each do |k,v|
-          memo[k] = v
+        print "\n"
+
+        if properties.empty?
+          puts "Couldn't find any sowing info for #{veggie['name']} at #{uri}"
+          next
         end
+
+        puts "Found sowing info for #{properties["name"]}."
+
+        output = JSON.pretty_generate(properties)
+
+        file << "#{output},\n"
       end
-
-      pp properties
-
-      memo[properties["botanical-name"]] = properties
-    end
-
-    File.open("#{Time.current.strftime("%Y-%m-%d")}-botanical_interests.json", "wb") do |file|
-      file << data.to_json
     end
   end
 

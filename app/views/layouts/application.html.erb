@@ -14,7 +14,9 @@
   <body>
     <nav class="bg-gray-800 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
-        <div class="text-lg font-semibold">Planter</div>
+        <div class="text-lg font-semibold">
+          <%= link_to "Planter", root_path  %>
+        </div>
         <div class="flex gap-4">
           <%= link_to "People", people_path, class: "hover:bg-gray-700 p-2 rounded" %>
           <%= link_to "Plants", plants_path, class: "hover:bg-gray-700 p-2 rounded" %>

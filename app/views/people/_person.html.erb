@@ -9,10 +9,10 @@
     <%= person.email %>
   </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Plants:</strong>
+  <strong class="block font-medium mb-1">Plants:</strong>
+  <ul class="my-5">
     <% person.plants.each do |plant| %>
-    <%= plant.name %>
+    <li><%= plant.name %></li>
     <% end %>
-  </p>
+  </ul>
 </div>
